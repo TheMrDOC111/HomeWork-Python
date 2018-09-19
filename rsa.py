@@ -8,7 +8,6 @@ def is_prime(n):
         if n % i == 0:
             prime = False
 
-
     return prime
 
 
@@ -24,15 +23,13 @@ def gcd(a, b):
 
 
 def multiplicative_inverse(e, phi):
-    """
-    Euclid's extended algorithm for finding the multiplicative
-    inverse of two numbers.
+    d = 0
+    for i in range(phi):
+        if i * e % phi == 1:
+            d = i
+            break
 
-    >>> multiplicative_inverse(7, 40)
-    23
-    """
-    # PUT YOUR CODE HERE
-    pass
+    return d
 
 
 def generate_keypair(p, q):
