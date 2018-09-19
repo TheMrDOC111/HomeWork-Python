@@ -32,7 +32,6 @@ def decrypt_caesar(ciphertext):
             plaintext += setUp(alphabet[(alphabet.index(ciphertext[i].lower()) - k) % len(alphabet)], upper)
         else:
             plaintext += ciphertext[i]
-
     return plaintext
 
 
