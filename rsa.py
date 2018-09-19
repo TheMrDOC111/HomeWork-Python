@@ -8,15 +8,17 @@ def is_prime(n):
         if n % i == 0:
             prime = False
 
+
     return prime
 
 
 def gcd(a, b):
-    res = 0
+    res = 1
 
-    for i in range(2, min(a, b)//2+1):
+    for i in range(min(a, b), 1, -1):
         if (a % i == 0) and (b % i == 0):
-            res = 1
+            res = i
+            break
 
     return res
 
