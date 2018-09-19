@@ -2,18 +2,13 @@ import random
 
 
 def is_prime(n):
-    """
-    Tests to see if a number is prime.
+    prime = True
 
-    >>> is_prime(2)
-    True
-    >>> is_prime(11)
-    True
-    >>> is_prime(8)
-    False
-    """
-    # PUT YOUR CODE HERE
-    pass
+    for i in range(2, n // 2 + 1):
+        if n % i == 0:
+            prime = False
+
+    return prime
 
 
 def gcd(a, b):
