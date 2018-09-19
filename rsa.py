@@ -12,16 +12,13 @@ def is_prime(n):
 
 
 def gcd(a, b):
-    """
-    Euclid's algorithm for determining the greatest common divisor.
+    res = 0
 
-    >>> gcd(12, 15)
-    3
-    >>> gcd(3, 7)
-    1
-    """
-    # PUT YOUR CODE HERE
-    pass
+    for i in range(2, min(a, b)//2+1):
+        if (a % i == 0) and (b % i == 0):
+            res = 1
+
+    return res
 
 
 def multiplicative_inverse(e, phi):
@@ -42,16 +39,12 @@ def generate_keypair(p, q):
     elif p == q:
         raise ValueError('p and q cannot be equal')
 
-    # n = pq
-    # PUT YOUR CODE HERE
+    n = p * q
 
-    # phi = (p-1)(q-1)
-    # PUT YOUR CODE HERE
+    phi = (p - 1) * (q - 1)
 
-    # Choose an integer e such that e and phi(n) are coprime
     e = random.randrange(1, phi)
 
-    # Use Euclid's Algorithm to verify that e and phi(n) are comprime
     g = gcd(e, phi)
     while g != 1:
         e = random.randrange(1, phi)
