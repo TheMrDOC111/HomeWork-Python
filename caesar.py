@@ -6,7 +6,7 @@ alphabet = (
 k = 3
 
 
-def encrypt_caesar(plaintext):
+def encrypt_caesar(plaintext: str) -> str:
     ciphertext = ""
 
     for i in range(len(plaintext)):
@@ -21,7 +21,7 @@ def encrypt_caesar(plaintext):
     return ciphertext
 
 
-def decrypt_caesar(ciphertext):
+def decrypt_caesar(ciphertext: str) -> str:
     plaintext = ""
 
     for i in range(len(ciphertext)):
@@ -35,7 +35,7 @@ def decrypt_caesar(ciphertext):
     return plaintext
 
 
-def setUp(char, boolean):
+def setUp(char: str, boolean: bool) -> str:
     if boolean:
         char = char.upper()
 

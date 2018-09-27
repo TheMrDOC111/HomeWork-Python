@@ -1,7 +1,7 @@
 import random
 
 
-def is_prime(n):
+def is_prime(n: int) -> bool:
     prime = True
 
     for i in range(2, n // 2 + 1):
@@ -11,7 +11,7 @@ def is_prime(n):
     return prime
 
 
-def gcd(a, b):
+def gcd(a: int, b: int) -> int:
     res = 1
 
     for i in range(min(a, b), 1, -1):
@@ -22,7 +22,7 @@ def gcd(a, b):
     return res
 
 
-def multiplicative_inverse(e, phi):
+def multiplicative_inverse(e: int, phi: int) -> int:
     d = 0
     for i in range(phi):
         if i * e % phi == 1:

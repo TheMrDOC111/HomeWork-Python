@@ -4,7 +4,7 @@ alphabet = (
     "y", "z")
 
 
-def encrypt_vigenere(plaintext, keyword):
+def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     ciphertext = ""
 
     for i in range(len(plaintext)):
@@ -21,7 +21,7 @@ def encrypt_vigenere(plaintext, keyword):
     return ciphertext
 
 
-def decrypt_vigenere(ciphertext, keyword):
+def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     plaintext = ""
 
     for i in range(len(ciphertext)):
@@ -38,7 +38,7 @@ def decrypt_vigenere(ciphertext, keyword):
     return plaintext
 
 
-def setUp(char, boolean):
+def setUp(char: str, boolean: bool) -> str:
     if boolean:
         char = char.upper()
 
