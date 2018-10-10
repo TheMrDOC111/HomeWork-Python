@@ -1,3 +1,6 @@
+import math
+
+
 def read_sudoku(filename):
     """ Прочитать Судоку из указанного файла """
     digits = [c for c in open(filename).read() if c in '123456789.']
@@ -33,13 +36,51 @@ def get_row(values, pos):
 
 
 def get_col(values, pos):
-    return values[pos[1]]
+    l = []
+    for i in range(int(math.sqrt(len(values)))):
+        l.append(values[i][pos[1]])
+    return l
 
 
 def get_block(values, pos):
-    list = []
+    # print(values)
+    l = []
+    bigM = []
+    for k in range(len(values)):
 
-    return
+        n = int(math.sqrt(len(values[k])))
+
+        val = values[k]
+
+        mat = [[0] * n for i in range(n)]
+        j = -1
+
+        for i in range(len(val)):
+
+            if i % n == 0:
+                j += 1
+
+            mat[j][i % n] = val[i]
+        # print(k, " ", mat)
+        bigM.append(mat)
+
+    # print(bigM)
+    # print(bigM[pos[0]][pos[1]//n])
+    # print(bigM[1][1])
+
+    j = pos[1] // n
+
+    t = (pos[0] // n + 1) * n - 1
+    t1 = (pos[0] // n) * n - 1
+    for i in range(t1 + 1, t + 1):
+        l.append(bigM[i][j])
+
+    res = []
+    for i in range(n):
+        for j in range(n):
+            res.append(l[i][j])
+
+    return res
 
 
 def find_empty_positions(grid):
@@ -120,6 +161,6 @@ if __name__ == '__main__':
     for fname in ['puzzle1.txt', 'puzzle2.txt', 'puzzle3.txt']:
         grid = read_sudoku(fname)
         display(grid)
-        print(get_block(grid, (0, 1)))
+        print(get_block(grid, (8, 8)))
         # solution = solve(grid)
         #  display(solution)
