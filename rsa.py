@@ -2,6 +2,15 @@ import random
 
 
 def is_prime(n: int) -> bool:
+    """
+    >>> is_prime(2)
+    True
+    >>> is_prime(11)
+    True
+    >>> is_prime(8)
+    False
+    """
+
     prime = True
 
     for i in range(2, n // 2 + 1):
@@ -12,6 +21,13 @@ def is_prime(n: int) -> bool:
 
 
 def gcd(a: int, b: int) -> int:
+    """
+    >>> gcd(12, 15)
+    3
+    >>> gcd(3, 7)
+    1
+    """
+
     res = 1
 
     for i in range(min(a, b), 1, -1):
@@ -23,6 +39,11 @@ def gcd(a: int, b: int) -> int:
 
 
 def multiplicative_inverse(e: int, phi: int) -> int:
+    """
+    >>> multiplicative_inverse(7, 40)
+    23
+    """
+
     d = 0
     for i in range(phi):
         if i * e % phi == 1:
