@@ -13,9 +13,8 @@ def encrypt_caesar(plaintext: str) -> str:
     ciphertext = ""
 
     alphabet = (
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-        "w",
-        "x",
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+        "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
         "y", "z")
 
     for i in range(len(plaintext)):
@@ -23,10 +22,11 @@ def encrypt_caesar(plaintext: str) -> str:
         if plaintext[i].isupper():
             upper = True
         if plaintext[i].lower() in alphabet:
+            k = (3 + alphabet.index(plaintext[i].lower())) % len(alphabet)
             if upper:
-                ciphertext += str(alphabet[(3 + alphabet.index(plaintext[i].lower())) % len(alphabet)]).upper()
+                ciphertext += str(alphabet[k]).upper()
             else:
-                ciphertext += alphabet[(3 + alphabet.index(plaintext[i].lower())) % len(alphabet)]
+                ciphertext += alphabet[k]
         else:
             ciphertext += plaintext[i]
 
@@ -47,9 +47,8 @@ def decrypt_caesar(ciphertext: str) -> str:
     plaintext = ""
 
     alphabet = (
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-        "w",
-        "x",
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+        "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
         "y", "z")
 
     for i in range(len(ciphertext)):
@@ -57,10 +56,11 @@ def decrypt_caesar(ciphertext: str) -> str:
         if ciphertext[i].isupper():
             upper = True
         if ciphertext[i].lower() in alphabet:
+            k = (alphabet.index(ciphertext[i].lower()) - 3) % len(alphabet)
             if upper:
-                plaintext += str(alphabet[(alphabet.index(ciphertext[i].lower()) - 3) % len(alphabet)]).upper()
+                plaintext += str(alphabet[k]).upper()
             else:
-                plaintext += alphabet[(alphabet.index(ciphertext[i].lower()) - 3) % len(alphabet)]
+                plaintext += alphabet[k]
         else:
             plaintext += ciphertext[i]
     return plaintext
