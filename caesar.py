@@ -1,3 +1,6 @@
+import string
+
+
 def encrypt_caesar(plaintext: str) -> str:
     """
        >>> encrypt_caesar("PYTHON")
@@ -12,21 +15,16 @@ def encrypt_caesar(plaintext: str) -> str:
 
     ciphertext = ""
 
-    alphabet = (
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-        "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
-        "y", "z")
-
     for i in range(len(plaintext)):
         upper = False
         if plaintext[i].isupper():
             upper = True
-        if plaintext[i].lower() in alphabet:
-            k = (3 + alphabet.index(plaintext[i].lower())) % len(alphabet)
+        if plaintext[i].lower() in string.ascii_lowercase:
+            k = (3 + string.ascii_lowercase.index(plaintext[i].lower())) % len(string.ascii_lowercase)
             if upper:
-                ciphertext += str(alphabet[k]).upper()
+                ciphertext += string.ascii_lowercase[k].upper()
             else:
-                ciphertext += alphabet[k]
+                ciphertext += string.ascii_lowercase[k]
         else:
             ciphertext += plaintext[i]
 
@@ -46,21 +44,16 @@ def decrypt_caesar(ciphertext: str) -> str:
        """
     plaintext = ""
 
-    alphabet = (
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-        "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
-        "y", "z")
-
     for i in range(len(ciphertext)):
         upper = False
         if ciphertext[i].isupper():
             upper = True
-        if ciphertext[i].lower() in alphabet:
-            k = (alphabet.index(ciphertext[i].lower()) - 3) % len(alphabet)
+        if ciphertext[i].lower() in string.ascii_lowercase:
+            k = (string.ascii_lowercase.index(ciphertext[i].lower()) - 3) % len(string.ascii_lowercase)
             if upper:
-                plaintext += str(alphabet[k]).upper()
+                plaintext += string.ascii_lowercase[k].upper()
             else:
-                plaintext += alphabet[k]
+                plaintext += string.ascii_lowercase[k]
         else:
             plaintext += ciphertext[i]
     return plaintext
