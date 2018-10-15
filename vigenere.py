@@ -1,3 +1,6 @@
+import string;
+
+
 def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     """
     >>> encrypt_vigenere("PYTHON", "A")
@@ -8,10 +11,7 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     'LXFOPVEFRNHR'
     """
 
-    alphabet = (
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-        "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
-        "y", "z")
+
 
     ciphertext = ""
 
@@ -19,14 +19,14 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
         upper = False
         if plaintext[i].isupper():
             upper = True
-        if plaintext[i].lower() in alphabet:
-            k = (alphabet.index(plaintext[i].lower()) + alphabet.index(
+        if plaintext[i].lower() in string.ascii_lowercase:
+            k = (string.ascii_lowercase.index(plaintext[i].lower()) + string.ascii_lowercase.index(
                 keyword[i % len(keyword)].lower()))
             if upper:
-                ciphertext += str(
-                    alphabet[k % len(alphabet)]).upper()
+                ciphertext += (
+                    string.ascii_lowercase[k % len(string.ascii_lowercase)]).upper()
             else:
-                ciphertext += str(alphabet[k % len(alphabet)])
+                ciphertext += string.ascii_lowercase[k % len(string.ascii_lowercase)]
         else:
             ciphertext += plaintext[i]
 
@@ -43,26 +43,21 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     'ATTACKATDAWN'
     """
 
-    alphabet = (
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-        "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
-        "y", "z")
-
     plaintext = ""
 
     for i in range(len(ciphertext)):
         upper = False
         if ciphertext[i].isupper():
             upper = True
-        if ciphertext[i].lower() in alphabet:
-            k = (alphabet.index(ciphertext[i].lower()) - alphabet.index(
+        if ciphertext[i].lower() in string.ascii_lowercase:
+            k = (string.ascii_lowercase.index(ciphertext[i].lower()) - string.ascii_lowercase.index(
                 keyword[i % len(keyword)].lower()))
             if upper:
-                plaintext += str(
-                    alphabet[k % len(alphabet)]).upper()
+                plaintext += (
+                    string.ascii_lowercase[k % len(string.ascii_lowercase)]).upper()
             else:
-                plaintext += str(
-                    alphabet[k % len(alphabet)])
+                plaintext += (
+                    string.ascii_lowercase[k % len(string.ascii_lowercase)])
         else:
             plaintext += ciphertext[i]
 
