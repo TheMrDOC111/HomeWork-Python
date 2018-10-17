@@ -10,9 +10,7 @@ def is_prime(n: int) -> bool:
     >>> is_prime(8)
     False
     """
-
     prime = True
-
     for i in range(2, n // 2 + 1):
         if n % i == 0:
             prime = False
@@ -27,9 +25,7 @@ def gcd(a: int, b: int) -> int:
     >>> gcd(3, 7)
     1
     """
-
     res = 1
-
     for i in range(min(a, b), 1, -1):
         if (a % i == 0) and (b % i == 0):
             res = i
@@ -43,31 +39,23 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     >>> multiplicative_inverse(7, 40)
     23
     """
-
-    d = 0
     data = []
     m = phi
-
     while True:
         mas = []
-
         mas.append(phi // e)
         mas.append(0)
         mas.append(0)
         data.append(mas)
         if phi % e == 0:
             break
-
         c = phi % e
         phi = e
         e = c
-
     data[len(data) - 1][2] = 1
-
     for i in range(len(data) - 1, 0, -1):
         data[i - 1][2] = data[i][1] - data[i][2] * data[i - 1][0]
         data[i - 1][1] = data[i][2]
-
     return (data[0][2] + m) % m
 
 
