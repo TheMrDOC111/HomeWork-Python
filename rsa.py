@@ -45,12 +45,30 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     """
 
     d = 0
-    for i in range(phi):
-        if i * e % phi == 1:
-            d = i
+    data = []
+    m = phi
+
+    while True:
+        mas = []
+
+        mas.append(phi // e)
+        mas.append(0)
+        mas.append(0)
+        data.append(mas)
+        if phi % e == 0:
             break
 
-    return d
+        c = phi % e
+        phi = e
+        e = c
+
+    data[len(data) - 1][2] = 1
+
+    for i in range(len(data) - 1, 0, -1):
+        data[i - 1][2] = data[i][1] - data[i][2] * data[i - 1][0]
+        data[i - 1][1] = data[i][2]
+
+    return (data[0][2] + m) % m
 
 
 def generate_keypair(p, q):
