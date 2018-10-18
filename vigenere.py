@@ -16,7 +16,8 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
         if plaintext[i].isupper():
             upper = True
         if plaintext[i].lower() in string.ascii_lowercase:
-            k = (string.ascii_lowercase.index(plaintext[i].lower()) + string.ascii_lowercase.index(
+            k = (string.ascii_lowercase.index(plaintext[i].lower()
+                                              ) + string.ascii_lowercase.index(
                 keyword[i % len(keyword)].lower()))
             if upper:
                 ciphertext += (
@@ -45,7 +46,8 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
         if ciphertext[i].isupper():
             upper = True
         if ciphertext[i].lower() in string.ascii_lowercase:
-            k = (string.ascii_lowercase.index(ciphertext[i].lower()) - string.ascii_lowercase.index(
+            k = (string.ascii_lowercase.index(ciphertext[i].lower()
+                                              ) - string.ascii_lowercase.index(
                 keyword[i % len(keyword)].lower()))
             if upper:
                 plaintext += (
