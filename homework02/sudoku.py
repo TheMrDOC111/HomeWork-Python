@@ -62,10 +62,8 @@ def get_col(values: list, pos: tuple) -> list:
     ['3', '6', '9']
     """
 
-    col = []
-    for i in values:
-        col.append(i[pos[1]])
-    return col
+    ri, ci = pos
+    return [row[ci] for row in values]
 
 
 def get_block(values: list, pos: tuple) -> list:
@@ -128,6 +126,9 @@ def find_empty_positions(grid: list) -> tuple:
             if grid[i][j] == ".":
                 return i, j
 
+    return -1, -1
+
+
 
 def find_possible_values(grid: list, pos: tuple) -> set:
     """ Вернуть множество возможных значения для указанной позиции
@@ -161,23 +162,22 @@ def solve(grid: list):
     >>> solve(grid)
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
-    if find_empty_positions(grid) is None:
+    if find_empty_positions(grid) == (-1, -1):
         return grid
     (i, j) = find_empty_positions(grid)
     values = find_possible_values(grid, (i, j))
+    if values == set():
+        return None
     for currentValue in values:
         grid[i][j] = currentValue
         if not (solve(grid) is None):
             return grid
     grid[i][j] = '.'
     return None
-    pass
 
 
 def check_solution(solution: list) -> bool:
     all_num = set("123456789")
-    k = 0
-    j = 0
 
     for i in range(len(solution)):
         if set(get_row(solution, (i, 0))) != all_num:
@@ -238,4 +238,3 @@ if __name__ == '__main__':
         display(grid)
         solution = solve(grid)
         display(solution)
-        print(check_solution(solution))
