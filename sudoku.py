@@ -40,7 +40,7 @@ def group(values: list, n: int) -> list:
     return mat
 
 
-def get_row(values, pos):
+def get_row(values: list, pos: tuple) -> list:
     """ Возвращает все значения для номера строки, указанной в pos
     >>> get_row([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
     ['1', '2', '.']
@@ -52,7 +52,7 @@ def get_row(values, pos):
     return values[pos[0]]
 
 
-def get_col(values: list, pos):
+def get_col(values: list, pos: tuple) -> list:
     """ Возвращает все значения для номера столбца, указанного в pos
     >>> get_col([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
     ['1', '4', '7']
@@ -68,7 +68,7 @@ def get_col(values: list, pos):
     return col
 
 
-def get_block(values, pos):
+def get_block(values: list, pos: tuple) -> list:
     """ Возвращает все значения из квадрата, в который попадает позиция pos
     >>> grid = read_sudoku('puzzle1.txt')
     >>> get_block(grid, (0, 1))
@@ -113,7 +113,7 @@ def get_block(values, pos):
     return res
 
 
-def find_empty_positions(grid):
+def find_empty_positions(grid: list) -> tuple:
     """ Найти первую свободную позицию в пазле
     >>> find_empty_positions([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']])
     (0, 2)
@@ -129,7 +129,7 @@ def find_empty_positions(grid):
                 return i, j
 
 
-def find_possible_values(grid, pos):
+def find_possible_values(grid: list, pos: tuple) -> set:
     """ Вернуть множество возможных значения для указанной позиции
     >>> grid = read_sudoku('puzzle1.txt')
     >>> values = find_possible_values(grid, (0,2))
@@ -149,7 +149,7 @@ def find_possible_values(grid, pos):
     return res
 
 
-def solve(grid):
+def solve(grid: list):
     """ Решение пазла, заданного в grid
     Как решать Судоку?
     1. Найти свободную позицию
@@ -174,7 +174,7 @@ def solve(grid):
     pass
 
 
-def check_solution(solution):
+def check_solution(solution: list) -> bool:
     all_num = set("123456789")
     k = 0
     j = 0
@@ -192,7 +192,7 @@ def check_solution(solution):
     return True
 
 
-def generate_sudoku(N):
+def generate_sudoku(N: int) -> list:
     """ Генерация судоку заполненного на N элементов
     >>> grid = generate_sudoku(40)
     >>> sum(1 for row in grid for e in row if e == '.')
