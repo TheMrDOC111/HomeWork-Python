@@ -29,15 +29,8 @@ def group(values: list, n: int) -> list:
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
 
-    mat = [[0] * n for i in range(n)]
-    j = -1
-    for i in range(len(values)):
-
-        if i % n == 0:
-            j += 1
-
-        mat[j][i % n] = values[i]
-    return mat
+    grid = [values[line:line + n] for line in range(0, len(values), n)]
+    return grid
 
 
 def get_row(values: list, pos: tuple) -> list:
@@ -77,37 +70,11 @@ def get_block(values: list, pos: tuple) -> list:
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
 
-    matrix = []
-    big_m = []
-    for k in range(len(values)):
-
-        n = int(math.sqrt(len(values[k])))
-
-        val = values[k]
-
-        mat = [[0] * n for i in range(n)]
-        j = -1
-
-        for i in range(len(val)):
-
-            if i % n == 0:
-                j += 1
-
-            mat[j][i % n] = val[i]
-        big_m.append(mat)
-
-    j = pos[1] // n
-
-    t = (pos[0] // n + 1) * n - 1
-    t1 = (pos[0] // n) * n - 1
-    for i in range(t1 + 1, t + 1):
-        matrix.append(big_m[i][j])
-
-    res = []
-    for i in range(n):
-        for j in range(n):
-            res.append(matrix[i][j])
-
+    row, col = pos
+    k = int(math.sqrt(len(values)))
+    br = k * (row // k)
+    bc = k * (col // k)
+    res = [values[br + r][bc + c] for r in range(k) for c in range(k)]
     return res
 
 
@@ -127,7 +94,6 @@ def find_empty_positions(grid: list) -> tuple:
                 return i, j
 
     return -1, -1
-
 
 
 def find_possible_values(grid: list, pos: tuple) -> set:
