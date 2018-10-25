@@ -26,10 +26,10 @@ class GameOfLife:
         """ Отрисовать сетку """
         for x in range(0, self.width, self.cell_size):
             pygame.draw.line(self.screen, pygame.Color('black'),
-                    (x, 0), (x, self.height))
+                             (x, 0), (x, self.height))
         for y in range(0, self.height, self.cell_size):
             pygame.draw.line(self.screen, pygame.Color('black'),
-                    (0, y), (self.width, y))
+                             (0, y), (self.width, y))
 
     def run(self):
         """ Запустить игру """
@@ -64,7 +64,14 @@ class GameOfLife:
         :return: Список клеток, представленный в виде матрицы
         """
         self.clist = []
-        # PUT YOUR CODE HERE
+
+        self.clist = [[0] * self.cell_width for i in range(self.cell_height)]
+
+        if randomize:
+            for i in range(self.cell_height):
+                for j in range(self.cell_width):
+                    self.clist[i][j] = random.randint(0, 1)
+
         return self.clist
 
     def draw_cell_list(self, clist):
@@ -72,6 +79,15 @@ class GameOfLife:
 
         :param rects: Список клеток для отрисовки, представленный в виде матрицы
         """
+
+        for i in range(self.cell_height):
+            for j in range(self.cell_width):
+                color_cell = pygame.Color('white')
+
+                if clist[i][j] == 1:
+                    color_cell = pygame.Color('green')
+
+                pygame.draw.rect(self.screen, color_cell, Rect(i, j, self.cell_size, self.cell_size))
         pass
 
     def get_neighbours(self, cell):
@@ -80,8 +96,19 @@ class GameOfLife:
         :param cell: Позиция ячейки в сетке, задается кортежем вида (row, col)
         :return: Одномерный список ячеек, смежных к ячейке cell
         """
+
+        print()
         neighbours = []
-        # PUT YOUR CODE HERE
+
+        dx = [-1, -1, -1, 0, 0, 1, 1, 1]
+        dy = [-1, 0, 1, -1, 1, -1, 0, 1]
+
+        x, y = cell
+        for i in range(8):
+            if x + dx[i] >= 0 and y + dy[i] >= 0:
+                if x + dx[i] < self.cell_height and y + dy[i] < self.cell_width:
+                    neighbours.append(self.clist[x + dx[i]][y + dy[i]])
+
         return neighbours
 
     def update_cell_list(self, cell_list):
@@ -93,6 +120,27 @@ class GameOfLife:
         :param cell_list: Игровое поле, представленное в виде матрицы
         :return: Обновленное игровое поле
         """
-        new_clist = []
+
+        new_clist = [[0] * self.cell_width for i in range(self.cell_height)]
+
         # PUT YOUR CODE HERE
+        for i in range(self.cell_height):
+            for j in range(self.cell_width):
+                cell = i, j
+                neighbours = self.get_neighbours(cell)
+                k = 0
+                for t in neighbours:
+                    if t == 1:
+                        k += 1
+                if self.clist[i][j] == 0:
+                    if k == 3:
+                        new_clist[i][j] = 1
+
+                if self.clist[i][j] == 1:
+                    if k == 3 or k == 2:
+                        new_clist[i][j] = 1
+                    if k > 3:
+                        new_clist[i][j] = 0
+
+        self.clist = new_clist
         return self.clist
