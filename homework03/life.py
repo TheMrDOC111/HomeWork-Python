@@ -89,8 +89,7 @@ class GameOfLife:
                 if clist[i][j] == 1:
                     color_cell = pygame.Color('green')
 
-                    rect = Rect(i, j, self.cell_size, self.cell_size)
-
+                rect = Rect(i, j, self.cell_size, self.cell_size)
                 pygame.draw.rect(self.screen, color_cell, rect)
         pass
 
