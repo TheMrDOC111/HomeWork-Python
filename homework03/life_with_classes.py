@@ -41,7 +41,6 @@ class GameOfLife:
 
         # Создание списка клеток
         clist = CellList(self.cell_height, self.cell_width, False)
-        # PUT YOUR CODE HERE
 
         running = True
         while running:
@@ -53,7 +52,6 @@ class GameOfLife:
             # Отрисовка списка клеток
             # Выполнение одного шага игры (обновление состояния ячеек)
             clist = CellList.update(clist)
-            # PUT YOUR CODE HERE
 
             pygame.display.flip()
             clock.tick(self.speed)
@@ -61,33 +59,26 @@ class GameOfLife:
 
 
 class Cell:
-    row = 0
-    col = 0
-    state = False
 
     def __init__(self, row=0, col=0, state=False):
         self.row = row
         self.col = col
         self.state = state
-        pass
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
         if self.state:
             return True
 
         return False
+
+    def set_alive(self, state: bool) -> None:
+        self.state = state
 
     def __repr__(self):
         return str(int(self.state))
 
 
 class CellList:
-    clist = []
-    nrows = 0
-    ncols = 0
-
-    indexI = 0
-    indexJ = 0
 
     def __init__(self, nrows: int, ncols: int, randomize=False,
                  openFile=False, cell_list=[]):
@@ -107,9 +98,9 @@ class CellList:
         if randomize:
             for i in range(nrows):
                 for j in range(ncols):
-                    self.clist[i][j].state = random.randint(0, 1)
+                    self.clist[i][j].set_alive(random.randint(0, 1))
 
-    def get_neighbours(self, cell):
+    def get_neighbours(self, cell: Cell) -> list:
         neighbours = []
         dx = [-1, -1, -1, 0, 0, 1, 1, 1]
         dy = [-1, 0, 1, -1, 1, -1, 0, 1]
@@ -134,20 +125,18 @@ class CellList:
                 neighbours = self.get_neighbours(self.clist[i][j])
                 k = 0
                 for t in neighbours:
-                    if t.state == True:
+                    if t.is_alive():
                         k += 1
 
-                if self.clist[i][j].state == False:
+                if not self.clist[i][j].is_alive():
                     if k == 3:
-                        new_clist.clist[i][j].state = True
+                        new_clist.clist[i][j].set_alive(True)
 
-                if self.clist[i][j].state == True:
+                if self.clist[i][j].is_alive():
                     if k == 3 or k == 2:
-                        new_clist.clist[i][j].state = True
+                        new_clist.clist[i][j].set_alive(True)
                     if k > 3:
-                        new_clist.clist[i][j].state = False
-
-        print(new_clist.clist[0][0].state)
+                        new_clist.clist[i][j].set_alive(False)
 
         return new_clist
 
@@ -173,30 +162,31 @@ class CellList:
 
         for i in range(self.nrows):
             for j in range(self.ncols):
-                clist[i][j] = int(self.clist[i][j].state)
+                clist[i][j] = int(self.clist[i][j].is_alive())
 
         return str(clist)
 
     @classmethod
-    def from_file(cls, filename):
-        file = open(filename)
-        clist = []
-        i = 0
-        k = 0
-        ncol = 0
-        for line in file:
-            temp = []
-            for j in line:
-                if j == "0":
-                    temp.append(Cell(i, k, False))
-                else:
-                    temp.append(Cell(i, k, True))
-                ncol = k
-                k += 1
+    def from_file(cls, filename: str):
 
+        with open(filename, 'r', encoding='utf-8') as file:
+            clist = []
+            i = 0
             k = 0
-            i += 1
-            clist.append(temp)
+            ncol = 0
+            for line in file:
+                row = []
+                for j in line:
+                    if j == "0":
+                        row.append(Cell(i, k, False))
+                    else:
+                        row.append(Cell(i, k, True))
+                    ncol = k
+                    k += 1
 
-        nrow = i
+                k = 0
+                i += 1
+                clist.append(row)
+
+            nrow = i
         return CellList(nrow, ncol, openFile=True, cell_list=clist)

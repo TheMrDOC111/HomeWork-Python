@@ -75,7 +75,7 @@ class GameOfLife:
 
         return self.clist
 
-    def draw_cell_list(self, clist: list):
+    def draw_cell_list(self, clist: list) -> None:
         """ Отображение списка клеток
 
         :param rects: Список клеток для отрисовки,
@@ -91,7 +91,6 @@ class GameOfLife:
 
                 rect = Rect(i, j, self.cell_size, self.cell_size)
                 pygame.draw.rect(self.screen, color_cell, rect)
-        pass
 
     def get_neighbours(self, cell: tuple) -> list:
         """ Вернуть список соседей для указанной ячейки
