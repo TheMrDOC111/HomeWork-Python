@@ -66,10 +66,7 @@ class Cell:
         self.state = state
 
     def is_alive(self) -> bool:
-        if self.state:
-            return True
-
-        return False
+        return self.state
 
     def set_alive(self, state: bool) -> None:
         self.state = state
