@@ -5,7 +5,7 @@ import plotly
 import datetime
 
 config = {
-    'VK_ACCESS_TOKEN': 'eb9e4a9f422fabd0c3f7e37781043a6b55aa3d89683c3534bd23e07d82dcf3b7d237aee154bbb64e3b1e5',
+    'VK_ACCESS_TOKEN': '',
     'PLOTLY_USERNAME': 'Имя пользователя Plot.ly',
     'PLOTLY_API_KEY': 'Ключ доступа Plot.ly'
 }
