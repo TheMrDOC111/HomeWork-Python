@@ -5,7 +5,7 @@ import random
 
 class GameOfLife:
 
-    def __init__(self, width=640, height=480, cell_size=10, speed=10):
+    def __init__(self, width: int = 640, height: int = 480, cell_size: int = 10, speed: int = 10):
         self.width = width
         self.height = height
         self.cell_size = cell_size
@@ -18,7 +18,7 @@ class GameOfLife:
         # Вычисляем количество ячеек по вертикали и горизонтали
         self.cell_width = self.width // self.cell_size
         self.cell_height = self.height // self.cell_size
-
+        self.clist = self.cell_list()
         # Скорость протекания игры
         self.speed = speed
 
@@ -31,26 +31,25 @@ class GameOfLife:
             pygame.draw.line(self.screen, pygame.Color('black'),
                              (0, y), (self.width, y))
 
-    def run(self):
+    def run(self) -> None:
         """ Запустить игру """
         pygame.init()
         clock = pygame.time.Clock()
         pygame.display.set_caption('Game of Life')
         self.screen.fill(pygame.Color('white'))
 
-        # Создание списка клеток
-        self.cell_list(True)
+        self.clist = game.cell_list()
 
         running = True
         while running:
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == QUIT:  # type: ignore
                     running = False
+
             self.draw_grid()
 
-            # Отрисовка списка клеток
             self.draw_cell_list(self.clist)
-            # Выполнение одного шага игры (обновление состояния ячеек)
+
             self.clist = self.update_cell_list(self.clist)
 
             pygame.display.flip()
@@ -89,8 +88,10 @@ class GameOfLife:
                 if clist[i][j] == 1:
                     color_cell = pygame.Color('green')
 
-                rect = Rect(i, j, self.cell_size, self.cell_size)
+                rect = Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
                 pygame.draw.rect(self.screen, color_cell, rect)
+
+
 
     def get_neighbours(self, cell: tuple) -> list:
         """ Вернуть список соседей для указанной ячейки
@@ -144,3 +145,8 @@ class GameOfLife:
                         new_clist[i][j] = 0
 
         return new_clist
+
+
+if __name__ == '__main__':
+    game = GameOfLife(300, 300, 20)
+    game.run()
