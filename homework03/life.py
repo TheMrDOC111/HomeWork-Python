@@ -88,10 +88,13 @@ class GameOfLife:
                 if clist[i][j] == 1:
                     color_cell = pygame.Color('green')
 
-                rect = Rect(i * self.cell_size, j * self.cell_size, self.cell_size, self.cell_size)
+                start_x = j * self.cell_size + 1
+                start_y = i * self.cell_size + 1
+                end_x = self.cell_size - 1
+                end_y = self.cell_size - 1
+
+                rect = Rect(start_x, start_y, end_x, end_y)
                 pygame.draw.rect(self.screen, color_cell, rect)
-
-
 
     def get_neighbours(self, cell: tuple) -> list:
         """ Вернуть список соседей для указанной ячейки
@@ -148,5 +151,5 @@ class GameOfLife:
 
 
 if __name__ == '__main__':
-    game = GameOfLife(300, 300, 20)
+    game = GameOfLife(300, 200, 20)
     game.run()

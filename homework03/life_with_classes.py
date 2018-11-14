@@ -67,7 +67,12 @@ class GameOfLife:
             if cell.is_alive():
                 color_cell = pygame.Color('green')
 
-            rect = Rect(cell.row * self.cell_size, cell.col * self.cell_size, self.cell_size, self.cell_size)
+            start_x = cell.col * self.cell_size + 1
+            start_y = cell.row * self.cell_size + 1
+            end_x = self.cell_size - 1
+            end_y = self.cell_size - 1
+
+            rect = Rect(start_x, start_y, end_x, end_y)
             pygame.draw.rect(self.screen, color_cell, rect)
 
 
