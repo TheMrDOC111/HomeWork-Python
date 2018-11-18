@@ -18,7 +18,6 @@ def get(url: str, params={}, timeout=5, max_retries=5, backoff_factor=0.3) -> di
     for i in range(max_retries):
         try:
             res = requests.get(url, params=params).json()
-            print(res)
             try:
                 return res["response"]
             except KeyError:
@@ -111,7 +110,6 @@ def messages_get_history(user_id: int, offset=0, count=200) -> None:
         query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&offset={offset}&count={count}&v={v}".format(
             **query_params)
         response = get(query)
-        print(response)
         messages.extend(response["items"])
         count -= min(count, 200)
         query_params['offset'] += 200
@@ -148,16 +146,14 @@ def plotly_messages_freq(freq_list: list) -> None:
     """ Построение графика с помощью Plot.ly
     :param freq_list: список дат и их частот
     """
-    print(freq_list[0], freq_list[1])
     plotly.tools.set_credentials_file(username=config_ploty["username"], api_key=config_ploty["api_key"])
     data = [go.Scatter(x=freq_list[0], y=freq_list[1])]
     py.plot(data)
 
 
-def get_network(user_id, as_edgelist=True):
+def get_network(user_id: int, as_edgelist=True) -> list:
     users_ids = get_friends(user_id)['items']
     edges = []
-    matrix = np.zeros((len(users_ids), len(users_ids)))
     for user1 in range(len(users_ids)):
         response = get_friends(users_ids[user1])
         if response.get('error'):
@@ -165,22 +161,15 @@ def get_network(user_id, as_edgelist=True):
         friends = response['items']
         for user2 in range(user1 + 1, len(users_ids)):
             if users_ids[user2] in friends:
-                if as_edgelist:
-                    edges.append((user1, user2))
-                else:
-                    matrix[user1][user2] = 1
+                edges.append((user1, user2))
         time.sleep(0.33333334)
-
-    if not as_edgelist:
-        return matrix.tolist()
     return edges
 
 
-def plot_graph(user_id):
+def plot_graph(user_id: int) -> None:
     surnames = get_friends(user_id, 'last_name')
     vertices = [i['last_name'] for i in surnames['items']]
     edges = get_network(user_id)
-    print(edges)
     g = Graph(vertex_attrs={"shape": "circle",
                             "label": vertices,
                             "size": 10},
@@ -199,11 +188,10 @@ def plot_graph(user_id):
     clusters = g.community_multilevel()
     pal = igraph.drawing.colors.ClusterColoringPalette(len(clusters))
     g.vs['color'] = pal.get_many(clusters.membership)
-
     plot(g, **visual_style)
 
 
 if __name__ == '__main__':
-    # print("Примерный возраст", age_predict(164416858))
-    # messages_get_history(164416858)
+    print("Примерный возраст", age_predict(164416858))
+    messages_get_history(164416858)
     plot_graph(164416858)
