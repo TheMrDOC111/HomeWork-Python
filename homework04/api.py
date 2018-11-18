@@ -1,6 +1,4 @@
 import requests
-import json
-from datetime import datetime
 import plotly.plotly as py
 import plotly.graph_objs as go
 from datetime import datetime
@@ -8,22 +6,29 @@ from homework04.model import User
 from homework04.model import Message
 from homework04.plotly_config import config_ploty
 import plotly
-
 import time
+import igraph
 from homework04.vk_config import config
+from igraph import Graph, plot
+import numpy as np
 
 
-def get(url, params={}, timeout=5, max_retries=5, backoff_factor=0.3):
+def get(url: str, params={}, timeout=5, max_retries=5, backoff_factor=0.3) -> dict:
     delay = timeout
     for i in range(max_retries):
         try:
-            return requests.get(url, params=params).json()["response"]
+            res = requests.get(url, params=params).json()
+            print(res)
+            try:
+                return res["response"]
+            except KeyError:
+                return {'error': 'response error'}
         except requests.RequestException:
             time.sleep(delay)
             delay *= delay + backoff_factor
 
 
-def get_friends(user_id: int, fields) -> dict:
+def get_friends(user_id: int, fields="") -> dict:
     """ Вернуть данных о друзьях пользователя
     :param user_id: идентификатор пользователя, список друзей которого нужно получить
     :param fields: список полей, которые нужно получить для каждого пользователя
@@ -46,11 +51,9 @@ def get_friends(user_id: int, fields) -> dict:
     return response
 
 
-def age_predict(user_id):
+def age_predict(user_id: int) -> int:
     """ Наивный прогноз возраста по возрасту друзей
-
     Возраст считается как медиана среди возраста всех друзей пользователя
-
     :param user_id: идентификатор пользователя
     """
     assert isinstance(user_id, int), "user_id must be positive integer"
@@ -79,9 +82,8 @@ def age_predict(user_id):
     return ages[len(ages) // 2]
 
 
-def messages_get_history(user_id, offset=0, count=20):
+def messages_get_history(user_id: int, offset=0, count=200) -> None:
     """ Получить историю переписки с указанным пользователем
-
     :param user_id: идентификатор пользователя, с которым нужно получить историю переписки
     :param offset: смещение в истории переписки
     :param count: число сообщений, которое нужно получить
@@ -100,26 +102,27 @@ def messages_get_history(user_id, offset=0, count=20):
         'count': count,
         'v': config['v']
     }
-
+    query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&v={v}".format(
+        **query_params)
+    response = get(query)
+    count = response['count']
     messages = []
     while count > 0:
         query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&offset={offset}&count={count}&v={v}".format(
             **query_params)
         response = get(query)
+        print(response)
         messages.extend(response["items"])
         count -= min(count, 200)
         query_params['offset'] += 200
         query_params['count'] = min(count, 200)
-        time.sleep(0.4)
+        time.sleep(0.3334)
 
     count_dates_from_messages(messages)
 
-    pass
 
-
-def count_dates_from_messages(messages):
+def count_dates_from_messages(messages: list) -> None:
     """ Получить список дат и их частот
-
     :param messages: список сообщений
     """
     date = []
@@ -141,32 +144,66 @@ def count_dates_from_messages(messages):
     plotly_messages_freq([date, count])
 
 
-def plotly_messages_freq(freq_list):
+def plotly_messages_freq(freq_list: list) -> None:
     """ Построение графика с помощью Plot.ly
-
     :param freq_list: список дат и их частот
     """
-
     print(freq_list[0], freq_list[1])
-
     plotly.tools.set_credentials_file(username=config_ploty["username"], api_key=config_ploty["api_key"])
-
     data = [go.Scatter(x=freq_list[0], y=freq_list[1])]
     py.plot(data)
 
 
-def get_network(users_ids, as_edgelist=True):
-    # PUT YOUR CODE HERE
-    pass
+def get_network(user_id, as_edgelist=True):
+    users_ids = get_friends(user_id)['items']
+    edges = []
+    matrix = np.zeros((len(users_ids), len(users_ids)))
+    for user1 in range(len(users_ids)):
+        response = get_friends(users_ids[user1])
+        if response.get('error'):
+            continue
+        friends = response['items']
+        for user2 in range(user1 + 1, len(users_ids)):
+            if users_ids[user2] in friends:
+                if as_edgelist:
+                    edges.append((user1, user2))
+                else:
+                    matrix[user1][user2] = 1
+        time.sleep(0.33333334)
+
+    if not as_edgelist:
+        return matrix.tolist()
+    return edges
 
 
-def plot_graph(graph):
-    # PUT YOUR CODE HERE
-    pass
+def plot_graph(user_id):
+    surnames = get_friends(user_id, 'last_name')
+    vertices = [i['last_name'] for i in surnames['items']]
+    edges = get_network(user_id)
+    print(edges)
+    g = Graph(vertex_attrs={"shape": "circle",
+                            "label": vertices,
+                            "size": 10},
+              edges=edges, directed=False)
+
+    n = len(vertices)
+    visual_style = {
+        "vertex_size": 20,
+        "edge_color": "gray",
+        "layout": g.layout_fruchterman_reingold(
+            maxiter=100000,
+            area=n ** 2,
+            repulserad=n ** 2)
+    }
+
+    clusters = g.community_multilevel()
+    pal = igraph.drawing.colors.ClusterColoringPalette(len(clusters))
+    g.vs['color'] = pal.get_many(clusters.membership)
+
+    plot(g, **visual_style)
 
 
 if __name__ == '__main__':
-    print(age_predict(164416858))
-    print(messages_get_history(221450385))
-
-# user = User(**user_date)
+    # print("Примерный возраст", age_predict(164416858))
+    # messages_get_history(164416858)
+    plot_graph(164416858)
