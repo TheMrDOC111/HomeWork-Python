@@ -1,6 +1,8 @@
 import string
 
 
+
+
 def encrypt_caesar(plaintext: str) -> str:
     """
        >>> encrypt_caesar("PYTHON")

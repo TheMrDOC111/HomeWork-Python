@@ -1,6 +1,8 @@
 import random
 
 
+
+
 def is_prime(n: int) -> bool:
     """
     >>> is_prime(2)
