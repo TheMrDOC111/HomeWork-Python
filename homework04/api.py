@@ -14,7 +14,6 @@ import numpy as np
 
 
 def get(url: str, params={}, timeout=5, max_retries=5, backoff_factor=0.3) -> dict:
-    delay = timeout
     for i in range(max_retries):
         try:
             res = requests.get(url, params=params).json()
@@ -23,8 +22,8 @@ def get(url: str, params={}, timeout=5, max_retries=5, backoff_factor=0.3) -> di
             except KeyError:
                 return {'error': 'response error'}
         except requests.RequestException:
-            time.sleep(delay)
-            delay *= delay + backoff_factor
+            time.sleep(timeout)
+            timeout *= backoff_factor * (2 ** i)
 
 
 def get_friends(user_id: int, fields="") -> dict:
@@ -78,6 +77,10 @@ def age_predict(user_id: int) -> int:
         else:
             ages.append(age)
     ages.sort()
+
+    if len(ages) % 2 == 0:
+        return (ages[len(ages) // 2] + ages[len(ages) // 2 + 1]) // 2
+
     return ages[len(ages) // 2]
 
 
@@ -192,6 +195,7 @@ def plot_graph(user_id: int) -> None:
 
 
 if __name__ == '__main__':
-    print("Примерный возраст", age_predict(164416858))
-    messages_get_history(164416858)
-    plot_graph(164416858)
+    user_id = 164416858
+    print("Примерный возраст", age_predict(user_id))
+    messages_get_history(user_id)
+    plot_graph(user_id)
