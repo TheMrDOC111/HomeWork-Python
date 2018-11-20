@@ -38,7 +38,7 @@ class GameOfLife:
         pygame.display.set_caption('Game of Life')
         self.screen.fill(pygame.Color('white'))
 
-        self.clist = game.cell_list()
+        self.clist = self.cell_list()
 
         running = True
         while running:
@@ -151,5 +151,5 @@ class GameOfLife:
 
 
 if __name__ == '__main__':
-    game = GameOfLife(300, 200, 20)
-    game.run()
+    game1 = GameOfLife(300, 200, 20)
+    game1.run()

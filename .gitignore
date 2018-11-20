@@ -1,0 +1,6 @@
+homework03/.mypy_cache
+homework03/__pycache__
+homework04/config
+
+
+plotly.tools.set_credentials_file(username='themrdoc111', api_key='zk1jnXHFhMockynQZpul')

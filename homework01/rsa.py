@@ -69,7 +69,7 @@ def generate_keypair(p, q):
 
     phi = (p - 1) * (q - 1)
 
-    e = random.randrange(1, phi)
+    e = 1505
 
     g = gcd(e, phi)
     while g != 1:
@@ -81,6 +81,9 @@ def generate_keypair(p, q):
 
     # Return public and private keypair
     # Public key is (e, n) and private key is (d, n)
+
+    print(d, n, e)
+
     return ((e, n), (d, n))
 
 
