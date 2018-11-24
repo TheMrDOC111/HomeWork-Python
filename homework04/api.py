@@ -78,7 +78,7 @@ def messages_get_history(user_id, offset=0, count=200) -> list:
         count -= min(count, 200)
         query_params['offset'] += 200
         query_params['count'] = min(count, 200)
-        time.sleep(0.3334)
+        time.sleep(0.4)
 
     new_messages = []
     for message in messages:
