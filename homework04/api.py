@@ -68,22 +68,18 @@ def messages_get_history(user_id, offset=0, count=200) -> list:
     query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&v={v}".format(
         **query_params)
     response = get(query)
-    count = response.json()['response']['count']
     messages = []
-    while count > 0:
-        query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&offset={offset}&count={count}&v={v}".format(
-            **query_params)
-        response = get(query)
-        messages.extend(response.json()['response']["items"])
-        count -= min(count, 200)
-        query_params['offset'] += 200
-        query_params['count'] = min(count, 200)
-        time.sleep(0.4)
-
-    new_messages = []
-    for message in messages:
-        print(message)
-        new_messages.append(Message(**message))
-    messages = new_messages
-
-    return messages
+    try:
+        count = response.json()['response']['count']
+        while count > 0:
+            query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&offset={offset}&count={count}&v={v}".format(
+                **query_params)
+            response = get(query)
+            messages.extend(response.json()['response']["items"])
+            count -= min(count, 200)
+            query_params['offset'] += 200
+            query_params['count'] = min(count, 200)
+            time.sleep(0.4)
+        messages = [Message(**message) for message in messages]
+    finally:
+        return messages
