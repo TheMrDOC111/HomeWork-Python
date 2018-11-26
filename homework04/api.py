@@ -42,8 +42,12 @@ def get_friends(user_id: int, fields="") -> dict:
 
     query = "{domain}/friends.get?access_token={access_token}&user_id={user_id}&fields={fields}&v={v}".format(
         **query_params)
-    response = get(query).json()['response']['items']
-    return response
+    response = get(query, query_params)
+    json_doc = response.json()
+    fail = json_doc.get('error')
+    if fail:
+        raise Exception(json_doc['error']['error_msg'])
+    return json_doc['response']['items']
 
 
 def messages_get_history(user_id, offset=0, count=200) -> list:
@@ -65,21 +69,30 @@ def messages_get_history(user_id, offset=0, count=200) -> list:
         'count': count,
         'v': config.VK_CONFIG['version']
     }
-    query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&v={v}".format(
-        **query_params)
-    response = get(query)
+
     messages = []
     try:
-        count = response.json()['response']['count']
+
+        query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&v={v}".format(
+            **query_params)
+        response = get(query)
+        json_doc = response.json()
+        fail = json_doc.get('error')
+        if fail:
+            raise Exception(json_doc['error']['error_msg'])
+        count = json_doc['response']['count']
         while count > 0:
             query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&offset={offset}&count={count}&v={v}".format(
                 **query_params)
             response = get(query)
-            messages.extend(response.json()['response']["items"])
+            json_doc = response.json()
+            fail = json_doc.get('error')
+            if fail:
+                raise Exception(json_doc['error']['error_msg'])
+            messages.extend(json_doc['response']["items"])
             count -= min(count, 200)
             query_params['offset'] += 200
             query_params['count'] = min(count, 200)
             time.sleep(0.4)
-        messages = [Message(**message) for message in messages]
     finally:
         return messages

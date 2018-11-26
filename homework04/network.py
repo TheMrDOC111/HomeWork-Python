@@ -25,52 +25,29 @@ def get_network(user_id: int, as_edgelist) -> list:
     return matrix
 
 
-def plot_graph(user_id: int, as_edgelist) -> None:
-    if as_edgelist:
+def plot_graph(user_id: int) -> None:
+    surnames = get_friends(user_id, 'last_name')
+    vertices = [i['last_name'] for i in surnames]
+    edges = get_network(user_id, True)
 
-        surnames = get_friends(user_id, 'last_name')
-        vertices = [i['last_name'] for i in surnames]
-        edges = get_network(user_id, as_edgelist)
+    g = igraph.Graph(vertex_attrs={"shape": "circle",
+                                   "label": vertices,
+                                   "size": 10},
+                     edges=edges, directed=False)
 
-        g = igraph.Graph(vertex_attrs={"shape": "circle",
-                                       "label": vertices,
-                                       "size": 10},
-                         edges=edges, directed=False)
+    n = len(vertices)
+    visual_style = {
+        "vertex_size": 20,
+        "edge_color": "gray",
+        "layout": g.layout_fruchterman_reingold(
+            maxiter=100000,
+            area=n ** 2,
+            repulserad=n ** 2)
+    }
+    g.simplify(multiple=True, loops=True)
+    communities = g.community_edge_betweenness(directed=False)
+    clusters = communities.as_clustering()
+    pal = igraph.drawing.colors.ClusterColoringPalette(len(clusters))
+    g.vs['color'] = pal.get_many(clusters.membership)
+    igraph.plot(g, **visual_style)
 
-        n = len(vertices)
-        visual_style = {
-            "vertex_size": 20,
-            "edge_color": "gray",
-            "layout": g.layout_fruchterman_reingold(
-                maxiter=100000,
-                area=n ** 2,
-                repulserad=n ** 2)
-        }
-        g.simplify(multiple=True, loops=True)
-        communities = g.community_edge_betweenness(directed=False)
-        clusters = communities.as_clustering()
-        pal = igraph.drawing.colors.ClusterColoringPalette(len(clusters))
-        g.vs['color'] = pal.get_many(clusters.membership)
-        igraph.plot(g, **visual_style)
-
-    else:
-        surnames = get_friends(user_id, 'last_name')
-        vertices = [i['last_name'] for i in surnames]
-        edges = get_network(user_id, True)
-
-        g = igraph.Graph(vertex_attrs={"shape": "circle",
-                                       "label": vertices,
-                                       "size": 10},
-                         edges=edges, directed=False)
-
-        mat = get_network(user_id, False)
-
-        if mat == list(g.get_adjacency()):
-            print(True)
-        else:
-            print(False)
-
-
-if __name__ == '__main__':
-    user_id = 164416858
-    plot_graph(user_id, False)
