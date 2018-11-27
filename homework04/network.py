@@ -3,7 +3,7 @@ import igraph
 import time
 
 
-def get_network(user_id: int, as_edgelist) -> list:
+def get_network(user_id: int, as_edgelist=True) -> list:
     users_ids = get_friends(user_id)
     edges = []
     matrix = [[0] * len(users_ids) for i in range(len(users_ids))]
@@ -25,7 +25,7 @@ def get_network(user_id: int, as_edgelist) -> list:
     return matrix
 
 
-def plot_graph(user_id: int) -> None:
+def plot_graph(user_id):
     surnames = get_friends(user_id, 'last_name')
     vertices = [i['last_name'] for i in surnames]
     edges = get_network(user_id, True)
@@ -44,10 +44,9 @@ def plot_graph(user_id: int) -> None:
             area=n ** 2,
             repulserad=n ** 2)
     }
+
     g.simplify(multiple=True, loops=True)
-    communities = g.community_edge_betweenness(directed=False)
-    clusters = communities.as_clustering()
+    clusters = g.community_multilevel()
     pal = igraph.drawing.colors.ClusterColoringPalette(len(clusters))
     g.vs['color'] = pal.get_many(clusters.membership)
     igraph.plot(g, **visual_style)
-
