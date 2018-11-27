@@ -18,7 +18,7 @@ def get_network(user_id: int, as_edgelist=True) -> list:
                 else:
                     matrix[user1][user2] = 1
                     matrix[user2][user1] = 1
-        time.sleep(0.33333334)
+        time.sleep(0.4)
 
     if as_edgelist:
         return edges
