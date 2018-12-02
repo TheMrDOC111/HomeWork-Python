@@ -14,7 +14,6 @@ def get_page(group, week=''):
         domain=config.domain,
         week=week,
         group=group)
-    print(url)
     response = requests.get(url)
     web_page = response.text
     return web_page
@@ -132,7 +131,6 @@ def get_near_lesson(message):
         for lessons in times:
             i += 1
             lessons = float(str(lessons).split("-")[0].replace(":", "."))
-            print(time, lessons)
             if time < lessons:
                 resp += '<b>{}</b>, {}, {}\n'.format(lists[0][i], lists[1][i], lists[2][i])
                 break
