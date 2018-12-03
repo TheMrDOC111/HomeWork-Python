@@ -116,6 +116,7 @@ def get_near_lesson(message):
     web_page = get_page(group, week_number)
     skip_day = False
     resp = ''
+    find = False
     while True:
         status, lists = parse_schedule_for_a_near_lesson(web_page, str(day))
         if not status:
@@ -139,7 +140,7 @@ def get_near_lesson(message):
             lessons = float(str(lessons).split("-")[0].replace(":", "."))
             if time < lessons:
                 resp += '<b>{}</b>, {}, {}\n'.format(lists[0][i], lists[1][i], lists[2][i])
-                break
+                find = True
             elif i == len(times) - 1:
                 skip_day = True
                 day += 1
@@ -152,7 +153,9 @@ def get_near_lesson(message):
                     web_page = get_page(group, str(week_number))
                 continue
 
-        break
+        if find:
+            break
+
     bot.send_message(message.chat.id, resp, parse_mode='HTML')
 
 
