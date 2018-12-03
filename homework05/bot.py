@@ -73,8 +73,14 @@ def parse_schedule_for_a_near_lesson(web_page, number_day: str):
 @bot.message_handler(commands=['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
 def get_schedule(message):
     """ Получить расписание на указанный день """
-    day, group = message.text.split()
-    web_page = get_page(group)
+    param = message.text.split()
+    if len(param) == 3:
+        day, group, week = param
+        web_page = get_page(group, week)
+    else:
+        day, group = param
+        web_page = get_page(group)
+
     day_number = "-1"
     if day == "/monday":
         day_number = "1"
