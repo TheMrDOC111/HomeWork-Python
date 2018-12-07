@@ -1,5 +1,7 @@
 
-beautifulsoup4==4.6.0 
+beautifulsoup4==4.5.3
+
 bs4==0.0.1
- pyTelegramBotAPI==3.5.1 
+pyTelegramBotAPI==3.6.6
 requests==2.18.4
+html5lib==1.0.1
