@@ -2,17 +2,15 @@ from bottle import (
     route, run, template, request, redirect
 )
 
-from scrapper import get_news
+from scraputils import get_news
 from db import News, session
 from bayes import NaiveBayesClassifier
 
 
-# тест
-
 @route("/news")
 def news_list():
     s = session()
-    rows = s.query(News).filter(News.label == None).all()
+    rows = s.query(News).filter(News.label is None).all()
     return template('news_template', rows=rows)
 
 
