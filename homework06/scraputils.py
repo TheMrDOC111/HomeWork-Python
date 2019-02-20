@@ -24,7 +24,8 @@ def extract_news(parser):
             'comments': comments,
             'points': points,
             'title': title.text,
-            'url': title['href']
+            'url': title['href'],
+            'label': None
         }
         news_list.append(news)
 
@@ -53,14 +54,15 @@ def get_news(url, n_pages=1):
 
 
 news = get_news("https://news.ycombinator.com/", 1)
-for i in news:
+"""for i in news:
     print(i)
 
 s = db.session()
 for i in range(len(news)):
     obj = db.News(title=news[i]['title'],
+    obj = db.News(title=news[i]['title'],
                   author=news[i]['author'],
-                  url=news[i]['author'],
+                  url=news[i]['url'],
                   comments=news[i]['comments'],
                   points=news[i]['points'])
 
@@ -68,3 +70,4 @@ for i in range(len(news)):
 
 
 s.commit()
+"""
