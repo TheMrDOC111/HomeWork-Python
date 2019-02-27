@@ -8,43 +8,41 @@ class NaiveBayesClassifier:
 
     def fit(self, X, y):
         """ Fit Naive Bayes classifier according to X, y."""
-        # {(aleks,spam): 1, (by,ham): 1, ..}
         lst = []
         for sentence, clss in zip(X, y):
             for word in sentence.split():
                 lst.append((word, clss))
         self.words_labels = Counter(lst)
-
-        # {ham: 6700, spam: 2000}
+        print("words_labels", self.words_labels)
         self.counted_labels = dict(Counter(y))
+        print("counted_labels", self.counted_labels)
         words = [word for sentence in X for word in sentence.split()]
-
-        # {"hi": 4, "bye": 2, "am": 1....}
         self.counted_words = dict(Counter(words))
+        print("counted_words", self.counted_words)
 
         self.model = {
             'labels': {},
             'words': {},
         }
 
-        # {'ham': {'count_by_label': 47670, 'likelihood': 0.8669230769230769}, 'spam': {'count_by_label': 12358, 'likelihood': 0.13307692307692306}}
-        for cur_label in self.counted_labels:
+        for var_label in self.counted_labels:
             params = {
-                # Total count of words with label
-                'count_by_label': self.count_words(cur_label),
-                # Likelihood of labels *P(C)*
-                'likelihood': self.counted_labels[cur_label] / len(y),
+                'count_by_label': self.count_words(var_label),
+                'likelihood': self.counted_labels[var_label] / len(y),
             }
-            self.model['labels'][cur_label] = params
 
+            self.model['labels'][var_label] = params
+
+        print("model", self.model)
         for word in self.counted_words:
             params = {}
 
-            for cur_label in self.counted_labels:
-                # Smoothing likelihood *P(wi|C)*
-                params[cur_label] = self.smoothing_likelihood(word, cur_label)
+            for var_label in self.counted_labels:
+                params[var_label] = self.smoothing_likelihood(word, var_label)
 
             self.model['words'][word] = params
+
+        print("model 2", self.model)
 
     def predict(self, X):
         """ Perform labelification on an array of test vectors X. """
@@ -58,19 +56,16 @@ class NaiveBayesClassifier:
 
                 likelihood = self.model['labels'][cur_label]['likelihood']
 
-                # Calculating lnP(C)
                 total_score = math.log(likelihood, math.e)
 
                 for word in words:
                     word_dict = self.model['words'].get(word, None)
 
                     if word_dict:
-                        # Calcuting the sum of lnP(wi|C)
                         total_score += math.log(word_dict[cur_label], math.e)
 
                 likely_labels.append((total_score, cur_label))
 
-            # Maximum value between lnP(label|D)
             _, answer = max(likely_labels)
             answers_lst.append(answer)
 
@@ -91,6 +86,7 @@ class NaiveBayesClassifier:
         nc = self.model['labels'][cur_label]['count_by_label']
         nic = self.words_labels.get((word, cur_label), 0)
         d = len(self.counted_words)
+        print(nc, nic, d)
         alpha = self.alpha
 
         return (nic + alpha) / (nc + alpha * d)

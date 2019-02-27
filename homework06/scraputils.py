@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import db
 
 
 def extract_news(parser):
@@ -35,7 +34,6 @@ def extract_news(parser):
 def extract_next_page(parser):
     """ Extract next page URL """
     return parser.table.find_all('table')[1].find_all('a')[-1]['href']
-    pass
 
 
 def get_news(url, n_pages=1):
@@ -51,23 +49,3 @@ def get_news(url, n_pages=1):
         news.extend(news_list)
         n_pages -= 1
     return news
-
-
-news = get_news("https://news.ycombinator.com/", 1)
-"""for i in news:
-    print(i)
-
-s = db.session()
-for i in range(len(news)):
-    obj = db.News(title=news[i]['title'],
-    obj = db.News(title=news[i]['title'],
-                  author=news[i]['author'],
-                  url=news[i]['url'],
-                  comments=news[i]['comments'],
-                  points=news[i]['points'])
-
-    s.add(obj)
-
-
-s.commit()
-"""

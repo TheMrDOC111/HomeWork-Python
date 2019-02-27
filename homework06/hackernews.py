@@ -3,9 +3,6 @@ from bottle import (
 )
 import bottle
 import string
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import TfidfVectorizer
 import os
 from scraputils import get_news
 from db import News, session
@@ -62,6 +59,7 @@ def classify_news():
     good, maybe, never = [], [], []
     for row in rows:
         [prediction] = classifier.predict([clean(row.title)])
+        print([prediction])
         if prediction == 'good':
             good.append(row)
         elif prediction == 'maybe':
@@ -81,12 +79,5 @@ if __name__ == "__main__":
     abs_app_dir_path = os.path.dirname(os.path.realpath(__file__))
     abs_views_path = os.path.join(abs_app_dir_path, 'templates')
     bottle.TEMPLATE_PATH.insert(0, abs_views_path)
-    s = session()
-    labeled_news = s.query(News).all()
-    x_train = [clean(news.title) for news in labeled_news]
-    y_train = [news.label for news in labeled_news]
     classifier = NaiveBayesClassifier()
-    classifier.fit(x_train, y_train)
-    print(classifier.score(x_train, y_train))
-
     run(host="localhost", port=8080)
