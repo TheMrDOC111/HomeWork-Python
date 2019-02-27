@@ -12,11 +12,9 @@ def extract_news(parser):
         links = info[i].find_all("a")
         title = news_table[i].find(class_="storylink")
         points = info[i].span.text.split()[0]
-        try:
-            if links[3].text != "discuss":
-                comments = links[3].text.split()[0]
-        except Exception as ex:
-            pass
+        print(links[-1].text)
+        if links[-1].text != "discuss":
+            comments = links[-1].text.split()[0]
 
         news = {
             'author': links[0].text,
