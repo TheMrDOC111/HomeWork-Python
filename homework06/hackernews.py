@@ -58,8 +58,8 @@ def classify_news():
     rows = s.query(News).filter(News.label == None).all()
     good, maybe, never = [], [], []
     for row in rows:
-        [prediction] = classifier.predict([clean(row.title)])
-        print([prediction])
+        prediction = classifier.predict([clean(row.title)])
+        print(prediction)
         if prediction == 'good':
             good.append(row)
         elif prediction == 'maybe':

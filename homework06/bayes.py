@@ -46,8 +46,6 @@ class NaiveBayesClassifier:
 
     def predict(self, X):
         """ Perform labelification on an array of test vectors X. """
-        answers_lst = []
-
         for sentence in X:
             words = sentence.split()
             likely_labels = []
@@ -67,9 +65,7 @@ class NaiveBayesClassifier:
                 likely_labels.append((total_score, cur_label))
 
             _, answer = max(likely_labels)
-            answers_lst.append(answer)
-
-        return answers_lst
+        return answer
 
     def score(self, X_test, y_test):
         """ Returns the mean accuracy on the given test data and labels. """
