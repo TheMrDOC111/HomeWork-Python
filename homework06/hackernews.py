@@ -58,8 +58,7 @@ def classify_news():
     rows = s.query(News).filter(News.label == None).all()
     good, maybe, never = [], [], []
     for row in rows:
-        prediction = classifier.predict([clean(row.title)])
-        print(prediction)
+        prediction = classifier.predict(clean(row.title))
         if prediction == 'good':
             good.append(row)
         elif prediction == 'maybe':
@@ -81,3 +80,6 @@ if __name__ == "__main__":
     bottle.TEMPLATE_PATH.insert(0, abs_views_path)
     classifier = NaiveBayesClassifier()
     run(host="localhost", port=8080)
+
+
+

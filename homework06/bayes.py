@@ -3,7 +3,7 @@ import math
 
 
 class NaiveBayesClassifier:
-    def __init__(self, alpha=1.0):
+    def __init__(self, alpha=0.05):
         self.alpha = alpha
 
     def fit(self, X, y):
@@ -33,7 +33,6 @@ class NaiveBayesClassifier:
 
             self.model['labels'][var_label] = params
 
-        print("model", self.model)
         for word in self.counted_words:
             params = {}
 
@@ -42,47 +41,53 @@ class NaiveBayesClassifier:
 
             self.model['words'][word] = params
 
-        print("model 2", self.model)
+        # print("model: ", self.model)
 
     def predict(self, X):
-        """ Perform labelification on an array of test vectors X. """
+        words = X.split()
+        likely_labels = []
+        for cur_label in self.model['labels']:
+            likelihood = self.model['labels'][cur_label]['likelihood']
+            total_score = math.log(likelihood, math.e)
+            for word in words:
+                word_dict = self.model['words'].get(word, None)
+                if word_dict:
+                    total_score += math.log(word_dict[cur_label], math.e)
+            likely_labels.append((total_score, cur_label))
+        _, answer = max(likely_labels)
+        return answer
+
+    """def predict(self, X):
+        answers_lst = []
         for sentence in X:
             words = sentence.split()
             likely_labels = []
-
             for cur_label in self.model['labels']:
-
                 likelihood = self.model['labels'][cur_label]['likelihood']
-
                 total_score = math.log(likelihood, math.e)
-
                 for word in words:
                     word_dict = self.model['words'].get(word, None)
-
                     if word_dict:
                         total_score += math.log(word_dict[cur_label], math.e)
-
                 likely_labels.append((total_score, cur_label))
-
             _, answer = max(likely_labels)
-        return answer
+            answers_lst.append(answer)
+        return answers_lst"""
 
     def score(self, X_test, y_test):
-        """ Returns the mean accuracy on the given test data and labels. """
-        count = len(y_test)
         correct = 0
-        for i, answer in enumerate(self.predict(X_test)):
+        for i in range(len(X_test)):
+            answer = self.predict(X_test[i])
             if answer == y_test[i]:
                 correct += 1
 
-        return correct / count
+        return correct / len(y_test)
 
     def smoothing_likelihood(self, word, cur_label):
         """ Returns the smoothed likelihood with the given word and label in loop. """
         nc = self.model['labels'][cur_label]['count_by_label']
         nic = self.words_labels.get((word, cur_label), 0)
         d = len(self.counted_words)
-        print(nc, nic, d)
         alpha = self.alpha
 
         return (nic + alpha) / (nc + alpha * d)
