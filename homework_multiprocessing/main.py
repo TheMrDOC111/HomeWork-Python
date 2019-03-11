@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+import sys
 import psutil
 import threading
 import time
@@ -36,3 +37,4 @@ if __name__ == '__main__':
 
     status = False
     print("Done!")
+    sys.exit(0)
