@@ -6,6 +6,7 @@ import threading
 import time
 from multiprocessing import Queue
 
+
 class ProcessPool:
     def __init__(self, min_workers=2, max_workers=10, mem_usage=1024):
         self.min_workers = min_workers
@@ -25,23 +26,26 @@ class ProcessPool:
             time.sleep(1)
 
     def map(self, function, big_data):
-        queue = Queue()
+        output_queue = Queue()
+        input_queue = Queue()
+        for i in big_data:
+            input_queue.put(i)
         global vertex_memory
         self.workers = []
         self.status = True
         self.workers_usage = 0
         vertex_memory = 0
-        self.test_computation(function, big_data, queue)
+        self.test_computation(function, input_queue, output_queue)
         """for i in range(self.workers_usage):
-            self.workers.append(self.worker_init(function, big_data))"""
-        return [queue.get() for i in range(queue.qsize())]
+            self.workers.append(self.worker_init(function, input_queue))"""
+        return [output_queue.get() for i in range(output_queue.qsize())]
 
-    def worker_func(self, function, big_data, queue):
-        while len(big_data) > 0:
-            queue.put(function(big_data.pop(0)))
+    def worker_func(self, function, input_queue, output_queue):
+        while input_queue.qsize() > 0:
+            output_queue.put(function(input_queue.get()))
 
-    def worker_init(self, function, big_data, queue):
-        worker = multiprocessing.Process(target=self.worker_func, args=(function, big_data, queue))
+    def worker_init(self, function, input_queue, output_queue):
+        worker = multiprocessing.Process(target=self.worker_func, args=(function, input_queue, output_queue))
         self.workers.append(worker)
         worker.start()
         return worker
@@ -54,8 +58,8 @@ class ProcessPool:
         else:
             return self.max_workers
 
-    def test_computation(self, function, data_chunk, queue):
-        worker_first = self.worker_init(function, data_chunk, queue)
+    def test_computation(self, function, input_queue, output_queue):
+        worker_first = self.worker_init(function, input_queue, output_queue)
         thread_info = threading.Thread(target=self.get_proc_info, args=())
         thread_info.start()
         worker_first.join()
@@ -66,7 +70,6 @@ class ProcessPool:
             proc = multiprocessing.Process(target=self.benchmark, args=())
             self.process_list.append(proc)
             proc.start()
-
         thread_info = threading.Thread(target=self.get_proc_info, args=())
         thread_info.start()"""
 

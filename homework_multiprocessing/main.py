@@ -8,9 +8,8 @@ import process_pool
 from multiprocessing.pool import ThreadPool
 
 
-
 def benchmark(data_chunk):
-    a = 1000000000 ** data_chunk
+    a = 1000000000 + data_chunk
     return a
 
 
