@@ -1,19 +1,18 @@
-import multiprocessing
-import os
-import sys
-import psutil
-import threading
-import time
 import process_pool
-from multiprocessing.pool import ThreadPool
+import time
 
 
 def benchmark(data_chunk):
-    a = 1000000000 + data_chunk
-    return a
+    a = (2 ** data_chunk)
+    return 1
 
 
 if __name__ == '__main__':
+    start_time = time.process_time()
     pool = process_pool.ProcessPool()
-    results = pool.map(benchmark, [1230000, 4560000, 78900000, 10, 123000, 123000, 102030, 102030])
-    print(results)
+    results = pool.map(benchmark,
+                       [100000000, 100000000, 100000000, 100000000, 100000000, 100000000, 100000000, 100000000,
+                        100000000, 100000000, 100000000, 100000000, 100000000, 100000000, 100000000, 100000000,
+                        100000000, 100000000, 100000000, 100000000])
+    print("results:", results)
+    print("spend time:", time.perf_counter() - start_time)

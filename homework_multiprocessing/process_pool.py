@@ -8,7 +8,7 @@ from multiprocessing import Queue
 
 
 class ProcessPool:
-    def __init__(self, min_workers=2, max_workers=10, mem_usage=1024):
+    def __init__(self, min_workers=2, max_workers=60, mem_usage=512):
         self.min_workers = min_workers
         self.max_workers = max_workers
         self.mem_usage = mem_usage
@@ -36,16 +36,24 @@ class ProcessPool:
         self.workers_usage = 0
         vertex_memory = 0
         self.test_computation(function, input_queue, output_queue)
-        """for i in range(self.workers_usage):
-            self.workers.append(self.worker_init(function, input_queue))"""
+
+        for i in range(self.workers_usage):
+            self.worker_init(function, input_queue, output_queue)
+
+        print("workers:", self.workers)
+
+        for worker in self.workers:
+            # print("Worker join:", worker)
+            worker.join()
+
+        print("workers:", self.workers)
+
+        self.status = False
+
         return [output_queue.get() for i in range(output_queue.qsize())]
 
-    def worker_func(self, function, input_queue, output_queue):
-        while input_queue.qsize() > 0:
-            output_queue.put(function(input_queue.get()))
-
     def worker_init(self, function, input_queue, output_queue):
-        worker = multiprocessing.Process(target=self.worker_func, args=(function, input_queue, output_queue))
+        worker = multiprocessing.Process(target=worker_func, args=(function, input_queue, output_queue))
         self.workers.append(worker)
         worker.start()
         return worker
@@ -59,20 +67,26 @@ class ProcessPool:
             return self.max_workers
 
     def test_computation(self, function, input_queue, output_queue):
-        worker_first = self.worker_init(function, input_queue, output_queue)
+        worker_first = multiprocessing.Process(target=test_worker_func, args=(function, input_queue, output_queue))
+        self.workers.append(worker_first)
         thread_info = threading.Thread(target=self.get_proc_info, args=())
+        worker_first.start()
         thread_info.start()
         worker_first.join()
+        self.workers.clear()
         self.status = False
         self.workers_usage = self.value_workers(int(self.mem_usage / vertex_memory))
-
-        """for i in range(n_proc):  # вот тут пока осторожно(возможно -cpu)
-            proc = multiprocessing.Process(target=self.benchmark, args=())
-            self.process_list.append(proc)
-            proc.start()
-        thread_info = threading.Thread(target=self.get_proc_info, args=())
-        thread_info.start()"""
-
-        for worker in self.workers:
-            worker.join()
         print("DONE!", "vertex_memory:", vertex_memory, "workers_usage:", self.workers_usage)
+
+
+def test_worker_func(function, input_queue, output_queue):
+    value = input_queue.get()
+    # print("value:", value, "worker id:", os.getpid())
+    output_queue.put(function(value))
+
+
+def worker_func(function, input_queue, output_queue):
+    while input_queue.qsize() > 0:
+        value = input_queue.get()
+        # print("value:", value, "worker id:", os.getpid())
+        output_queue.put(function(value))
