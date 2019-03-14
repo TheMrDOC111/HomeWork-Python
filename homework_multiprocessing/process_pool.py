@@ -1,6 +1,5 @@
 import multiprocessing
 import os
-import sys
 import psutil
 import threading
 import time
@@ -8,7 +7,7 @@ from multiprocessing import Queue
 
 
 class ProcessPool:
-    def __init__(self, min_workers=2, max_workers=60, mem_usage=512):
+    def __init__(self, min_workers=2, max_workers=10, mem_usage=512):
         self.min_workers = min_workers
         self.max_workers = max_workers
         self.mem_usage = mem_usage
@@ -17,11 +16,11 @@ class ProcessPool:
         global vertex_memory
         while self.status:
             for worker in self.workers:
-                py = psutil.Process(worker.pid)  # proc info by id
+                py = psutil.Process(worker.pid)
                 memory_use = py.memory_info()
-                if float(memory_use.rss / 10 ** 6) > vertex_memory:
-                    vertex_memory = float(memory_use.rss / 10 ** 6)
-                print('memory use:', float(memory_use.rss) / 10 ** 6, " id:", worker.pid)
+                if float(memory_use.rss / 2 ** 20) > vertex_memory:
+                    vertex_memory = float(memory_use.rss / 2 ** 20)
+                print('memory use:', float(memory_use.rss) / 2 ** 20, " id:", worker.pid)
             print("-------------------------")
             time.sleep(1)
 
@@ -40,13 +39,8 @@ class ProcessPool:
         for i in range(self.workers_usage):
             self.worker_init(function, input_queue, output_queue)
 
-        print("workers:", self.workers)
-
         for worker in self.workers:
-            # print("Worker join:", worker)
             worker.join()
-
-        print("workers:", self.workers)
 
         self.status = False
 
@@ -81,12 +75,10 @@ class ProcessPool:
 
 def test_worker_func(function, input_queue, output_queue):
     value = input_queue.get()
-    # print("value:", value, "worker id:", os.getpid())
-    output_queue.put(function(value))
+    output_queue.put(function(value) + " by worker id: " + str(os.getpid()))
 
 
 def worker_func(function, input_queue, output_queue):
     while input_queue.qsize() > 0:
         value = input_queue.get()
-        # print("value:", value, "worker id:", os.getpid())
-        output_queue.put(function(value))
+        output_queue.put(function(value) + " by worker id: " + str(os.getpid()))
