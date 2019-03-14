@@ -46,13 +46,13 @@ class ProcessPool:
 
         return [output_queue.get() for i in range(output_queue.qsize())]
 
-    def worker_init(self, function, input_queue, output_queue):
+    def worker_init(self, function, input_queue: Queue, output_queue: Queue):
         worker = multiprocessing.Process(target=worker_func, args=(function, input_queue, output_queue))
         self.workers.append(worker)
         worker.start()
         return worker
 
-    def value_workers(self, n_proc):
+    def value_workers(self, n_proc: int):
         if n_proc in range(self.min_workers, self.max_workers):
             return n_proc
         elif n_proc < self.min_workers:
@@ -60,7 +60,7 @@ class ProcessPool:
         else:
             return self.max_workers
 
-    def test_computation(self, function, input_queue, output_queue):
+    def test_computation(self, function, input_queue: Queue, output_queue: Queue):
         worker_first = multiprocessing.Process(target=test_worker_func, args=(function, input_queue, output_queue))
         self.workers.append(worker_first)
         thread_info = threading.Thread(target=self.get_proc_info, args=())
@@ -73,12 +73,12 @@ class ProcessPool:
         print("DONE!", "vertex_memory:", vertex_memory, "workers_usage:", self.workers_usage)
 
 
-def test_worker_func(function, input_queue, output_queue):
+def test_worker_func(function, input_queue: Queue, output_queue: Queue):
     value = input_queue.get()
     output_queue.put(function(value) + " by worker id: " + str(os.getpid()))
 
 
-def worker_func(function, input_queue, output_queue):
+def worker_func(function, input_queue: Queue, output_queue: Queue):
     while input_queue.qsize() > 0:
         value = input_queue.get()
         output_queue.put(function(value) + " by worker id: " + str(os.getpid()))
