@@ -16,11 +16,14 @@ class ProcessPool:
         global vertex_memory
         while self.status:
             for worker in self.workers:
-                py = psutil.Process(worker.pid)
-                memory_use = py.memory_info()
-                if float(memory_use.rss / 2 ** 20) > vertex_memory:
-                    vertex_memory = float(memory_use.rss / 2 ** 20)
-                print('memory use:', float(memory_use.rss) / 2 ** 20, " id:", worker.pid)
+                try:
+                    py = psutil.Process(worker.pid)
+                    memory_use = py.memory_info()
+                    if float(memory_use.rss / 2 ** 20) > vertex_memory:
+                        vertex_memory = float(memory_use.rss / 2 ** 20)
+                    print('memory use:', float(memory_use.rss) / 2 ** 20, " id:", worker.pid)
+                except Exception:
+                    pass
             print("-------------------------")
             time.sleep(1)
 
@@ -68,7 +71,7 @@ class ProcessPool:
         thread_info.start()
         worker_first.join()
         self.workers.clear()
-        self.status = False
+        # self.status = False
         self.workers_usage = self.value_workers(int(self.mem_usage / vertex_memory))
         print("DONE!", "vertex_memory:", vertex_memory, "workers_usage:", self.workers_usage)
 
