@@ -11,16 +11,21 @@ class ProcessPool:
         self.min_workers = min_workers
         self.max_workers = max_workers
         self.mem_usage = mem_usage
+        self.output_queue = Queue()
+        self.input_queue = Queue()
+        self.workers = []
+        self.status = True
+        self.workers_usage = 0
+        self.vertex_memory = 0
 
     def get_proc_info(self):
-        global vertex_memory
         while self.status:
             for worker in self.workers:
                 try:
                     py = psutil.Process(worker.pid)
                     memory_use = py.memory_info()
-                    if float(memory_use.rss / 2 ** 20) > vertex_memory:
-                        vertex_memory = float(memory_use.rss / 2 ** 20)
+                    if float(memory_use.rss / 2 ** 20) > self.vertex_memory:
+                        self.vertex_memory = float(memory_use.rss / 2 ** 20)
                     print('memory use:', float(memory_use.rss) / 2 ** 20, " id:", worker.pid)
                 except Exception:
                     pass
@@ -28,26 +33,21 @@ class ProcessPool:
             time.sleep(1)
 
     def map(self, function, big_data):
-        output_queue = Queue()
-        input_queue = Queue()
+
         for i in big_data:
-            input_queue.put(i)
-        global vertex_memory
-        self.workers = []
-        self.status = True
-        self.workers_usage = 0
-        vertex_memory = 0
-        self.test_computation(function, input_queue, output_queue)
+            self.input_queue.put(i)
+
+        self.test_computation(function, self.input_queue, self.output_queue)
 
         for i in range(self.workers_usage):
-            self.worker_init(function, input_queue, output_queue)
+            self.worker_init(function, self.input_queue, self.output_queue)
 
         for worker in self.workers:
             worker.join()
 
         self.status = False
 
-        return [output_queue.get() for i in range(output_queue.qsize())]
+        return [self.output_queue.get() for i in range(self.output_queue.qsize())]
 
     def worker_init(self, function, input_queue: Queue, output_queue: Queue):
         worker = multiprocessing.Process(target=worker_func, args=(function, input_queue, output_queue))
@@ -72,8 +72,8 @@ class ProcessPool:
         worker_first.join()
         self.workers.clear()
         # self.status = False
-        self.workers_usage = self.value_workers(int(self.mem_usage / vertex_memory))
-        print("DONE!", "vertex_memory:", vertex_memory, "workers_usage:", self.workers_usage)
+        self.workers_usage = self.value_workers(int(self.mem_usage / self.vertex_memory))
+        print("DONE!", "vertex_memory:", self.vertex_memory, "workers_usage:", self.workers_usage)
 
 
 def test_worker_func(function, input_queue: Queue, output_queue: Queue):
