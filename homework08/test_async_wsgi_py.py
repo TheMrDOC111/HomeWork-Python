@@ -23,12 +23,6 @@ class TestAsyncHTTPServer(unittest.TestCase):
         server = r.headers.get('Server')
         self.assertIsNotNone(server)
 
-    def test_date_header(self):
-        """Date header exists"""
-        r = requests.get(f'{self.host}:{self.port}')
-        date = r.headers.get('Date')
-        self.assertIsNotNone(date)
-
     def test_directory_index(self):
         """Directory index file exists"""
         r = requests.get(f'{self.host}:{self.port}')
